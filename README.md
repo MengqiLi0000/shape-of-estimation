@@ -9,6 +9,16 @@ Question:
 The project studies their behavior through four components:
 
 **estimator + geometry + data distribution + perturbation**
+<img width="1847" height="1204" alt="01_robustness_curve" src="https://github.com/user-attachments/assets/31cca747-5c99-4895-bae4-a77faf418c5a" />
+
+
+![Uploading 03_contamination_geometry.png…]()
+<img width="1847" height="1204" alt="01_robustness_curve" src="https://github.com/user-attachments/assets/44680317-6a03-4b42-bfc7-a6825aab9f48" />
+
+<img width="1595" height="1341" alt="04_simplex_belief_trajectory_revised" src="https://github.com/user-attachments/assets/0ca94892-e631-429e-9067-dc68ec633eaf" />
+
+
+<img width="1512" height="1576" alt="05_sphere_intrinsic_vs_extrinsic" src="https://github.com/user-attachments/assets/1ad97b36-3ffe-42b0-a5a7-188cce65a34a" />
 
 
 ## Overview
