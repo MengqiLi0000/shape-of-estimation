@@ -1,219 +1,142 @@
 # The Shape of Estimation
 
-### Geometry, robustness, and statistical inference beyond Euclidean assumptions.
+**A visual research laboratory for geometry-aware statistical estimation, robustness, and strategic inference.**
 
-** A visual research laboratory for studying how statistical estimators behave when the geometry of the data, the observation model, or the data-generating process changes.
+Question:
 
-The object of the project is an estimator viewed as a functional
+> How does the behavior of an estimator change when the geometry of the data or the structure of the observations changes?
+
+The project studies their behavior through four components:
+
+**estimator + geometry + data distribution + perturbation**
+
+
+## Overview
+
+Many familiar statistical estimators implicitly assume Euclidean geometry.
+
+For example, the sample mean is
 
 $$
-T:\mathcal P(\mathcal X)\rightarrow\Theta,
+\hat{\mu} = \frac{1}{n}\sum_{i=1}^{n} X_i.
 $$
 
-where both the observation space \(\mathcal X\) and parameter space \(\Theta\) may be non-Euclidean.
+On a general metric space, a natural analogue is the Fréchet mean:
 
-This project studies their behavior through four interacting objects:
-
-$$
-\boxed{
-\text{Estimator behavior}
+```math
+\hat{\mu}_F
 =
-\text{objective}
-+
-\text{geometry}
-+
-\text{data distribution}
-+
-\text{perturbation}
-}
-$$
+\arg\min_{\theta}
+\frac{1}{n}
+\sum_{i=1}^{n}
+d^2(X_i,\theta)
+```
 
-The goal is to make these interactions **visible**.
+Once the geometry changes, several questions become interesting:
 
----
+* How does curvature affect estimation?
+* How do outliers move an estimator?
+* When does an extrinsic approximation disagree with an intrinsic estimator?
+* Which estimators remain stable under adversarial contamination?
+* How should we average probability distributions?
+* How should an agent update beliefs when observations may be deceptive?
 
-## Why this project?
+The goal of this repository is to study these questions experimentally and visually.
 
-A sample mean in \(\mathbb R^d\) looks trivial:
 
-$$
-\hat\mu
-=
-\frac1n\sum_{i=1}^n X_i.
-$$
+## Research Questions
 
-But this formula quietly relies on Euclidean structure.
+### 1. Geometry
 
-On a general metric space \((\mathcal X,d)\), a more intrinsic notion of center is the Fréchet mean:
+How does the same estimator behave under different geometries?
 
-$$
-\hat\mu_F
-=
-\arg\min_{\theta\in\mathcal X}
-\frac1n
-\sum_{i=1}^n d^2(X_i,\theta).
-$$
-
-Now several questions appear.
-
-* What happens when the space has positive or negative curvature?
-* How does contamination move the estimator?
-* When does an extrinsic approximation stop agreeing with the intrinsic estimator?
-* Which estimators remain stable under adversarial perturbation?
-* How does the geometry of probability distributions change the meaning of "average"?
-* Can the same ideas explain belief estimation in strategic multi-agent systems?
-
-This repository treats these questions experimentally.
-
-It is designed around **estimator trajectories, loss landscapes, influence fields, and phase diagrams**.
-
----
-
-# Research program
-
-The project studies four related questions.
-
-## Q1. Geometry
-
-How does changing the geometry while holding the statistical task fixed change the estimator?
-
-$$
-(\mathcal X,d_1)
-\quad\longrightarrow\quad
-T_{d_1}(P)
-$$
-
-versus
-
-$$
-(\mathcal X,d_2)
-\quad\longrightarrow\quad
-T_{d_2}(P).
-$$
-
-Examples include:
+Examples:
 
 * Euclidean space
-* spheres
+* sphere
 * hyperbolic space
-* probability simplices
+* probability simplex
 * symmetric positive-definite matrices
-* Wasserstein spaces
+* Wasserstein space
 
----
+The goal is to compare estimation while changing as little else as possible.
 
-## Q2. Robustness
 
-For a contamination path
+### 2. Robustness
 
-$$
-P_\epsilon
+Suppose the observed distribution is contaminated:
+
+```math
+P_{\epsilon}
 =
-(1-\epsilon)P+\epsilon Q,
-$$
+(1-\epsilon)P+\epsilon Q
+```
 
-we study the estimator trajectory
+As contamination increases, the estimator follows a path:
 
-$$
+```math
+
 \epsilon
-\mapsto
-T(P_\epsilon).
-$$
+\longrightarrow
+T(P_{\epsilon}).
+```
 
-We visualize **how the estimator moves through its parameter space**.
+We visualize this path directly.
 
 This gives a geometric view of robustness.
 
----
 
-## Q3. Misspecification
+### 3. Model Misspecification
 
-Suppose the observations intrinsically live on a manifold, but inference is performed after embedding them into Euclidean space.
+Suppose the data naturally live on a manifold, but estimation is performed in an ambient Euclidean space.
 
-How large is
+We compare:
 
-$$
-d\left(
-T_{\text{intrinsic}}(P),
-T_{\text{extrinsic}}(P)
-\right)?
-$$
+```math
+\hat{\theta}_{\text{intrinsic}}
+```
 
-When does ignoring geometry become statistically meaningful?
+and
 
----
+```math
+\hat{\theta}_{\text{extrinsic}}.
+```
 
-## Q4. Strategic inference
+The question is:
 
-Suppose an agent maintains a belief
+> When does ignoring geometry become statistically expensive?
 
-$$
-\theta_t
-\in
-\Delta^{K-1}
-$$
 
-about another agent's latent strategy.
+### 4. Strategic Inference
 
-As observations arrive,
+Suppose an agent maintains a belief about another agent's latent behavioral type:
 
-$$
+```math
+\theta_t \in \Delta^{K-1}.
+```
+
+As new actions are observed,
+
+```math
 a_1,a_2,\ldots,a_t,
-$$
+```
 
-the estimator follows a trajectory
+the belief estimate evolves:
 
-$$
-\hat\theta_1
+```math
+\hat{\theta}_1
 \rightarrow
-\hat\theta_2
+\hat{\theta}_2
 \rightarrow
 \cdots
 \rightarrow
-\hat\theta_T.
-$$
+\hat{\theta}_T.
+```
 
-If some observations are deceptive or strategically generated, we can ask:
+If observations are strategically selected or deceptive, this becomes a robust estimation problem on the probability simplex.
 
-> How does adversarial information move belief estimators through the simplex?
 
-This connects robust statistics and geometric inference to artificial social intelligence.
-
----
-
-# Abstraction
-
-Every experiment in this repository is defined by six objects:
-
-$$
-\boxed{
-E =
-(\mathcal X,P,T,C,R,V)
-}
-$$
-
-where
-
-| Symbol         | Meaning                                 |
-| -------------- | --------------------------------------- |
-| \(\mathcal X\) | statistical space and geometry          |
-| \(P\)          | data-generating process                 |
-| \(T\)          | estimator                               |
-| \(C\)          | contamination or perturbation mechanism |
-| \(R\)          | risk functional                         |
-| \(V\)          | visualization                           |
-
-This structure is intentionally strict.
-
-A new estimator does not automatically constitute a new experiment.
-
-A useful experiment should isolate a statistical phenomenon.
-
----
-
-# Flagship experiment
-
-## Experiment 01 — The Geometry of Influence
+## Experiment 1: Geometry of Influence
 
 The first experiment studies robust location estimation on curved spaces.
 
@@ -223,349 +146,132 @@ $$
 \theta^\star
 $$
 
-and introduce contamination
+and introduce contamination:
 
-$$
-P_\epsilon
+```math
+P_{\epsilon}
 =
 (1-\epsilon)P
 +
 \epsilon Q.
-$$
+```
 
-We then compare:
+We compare:
 
 * Fréchet mean
 * geometric median
-* Huber location estimator
-* extrinsic Euclidean mean
+* Huber estimator
+* extrinsic mean
 
-across:
+across several geometries.
 
-* spherical geometry
-* Euclidean geometry
-* hyperbolic geometry
+The main quantity is intrinsic estimation error:
 
-while varying:
+```math
+d(\hat{\theta},\theta^\star).
+```
 
-* sample size \(n\)
-* contamination \(\epsilon\)
-* concentration
-* contamination direction
-* geometric curvature
+But the more interesting object is the entire estimator trajectory:
 
-The primary quantity is intrinsic estimation risk:
-
-$$
-R(T)
-=
-\mathbb E
-\left[
-d^2
-\left(
-T(\hat P_n),
-\theta^\star
-\right)
-\right].
-$$
-
-But the principal output is not the scalar risk.
-
-It is the **estimator trajectory**
-
-$$
+```math
 \epsilon
-\mapsto
-\hat\theta_\epsilon.
-$$
+\longrightarrow
+\hat{\theta}_{\epsilon}.
+```
 
----
 
-# What we visualize
+## What We Visualize
 
-Each estimator should eventually have a visual "portrait."
+### Estimator Trajectory
 
-## 1. Estimator trajectory
+We visualize how the estimate moves as contamination increases.
 
-$$
-\epsilon
-\mapsto
-T(P_\epsilon)
-$$
-
-shows where the estimator moves as contamination increases.
-
----
-
-## 2. Error trajectory
-
-$$
-\epsilon
-\mapsto
-d(T(P_\epsilon),\theta^\star).
-$$
-
-This gives the traditional robustness view.
-
----
-
-## 3. Objective landscape
-
-For a Fréchet estimator:
-
-$$
-F(\theta)
-=
-\frac1n
-\sum_{i=1}^{n}
-d^2(X_i,\theta).
-$$
-
-Instead of showing only
-
-$$
-\arg\min_\theta F(\theta),
-$$
-
-we visualize the entire landscape.
-
----
-
-## 4. Influence field
-
-For a contamination point \(z\), approximate
-
-$$
-\operatorname{IF}(z;T,P)
-=
-\lim_{\epsilon\rightarrow 0}
-\frac{
-T((1-\epsilon)P+\epsilon\delta_z)
--
-T(P)
-}{
-\epsilon
-}.
-$$
-
-On manifolds, subtraction is replaced by the logarithmic map.
-
-We therefore study the tangent-space quantity
-
-$$
-\operatorname{IF}_{\mathcal M}
-(z;T,P)
-\approx
-\frac{
-\log_{T(P)}
-T(P_\epsilon)
-}{
-\epsilon
-}.
-$$
-
-This produces a vector field showing **where individual contaminating observations try to pull an estimator**.
-
----
-
-## 5. Phase diagram
-
-The flagship summary figure is
-
-$$
-(\text{geometry},\epsilon)
-\mapsto
-R(T).
-$$
-
-For parameterized spaces, we can study
-
-$$
-(\kappa,\epsilon)
-\mapsto
-R(T),
-$$
-
-where \(\kappa\) represents curvature.
-
-This produces an empirical robustness phase diagram.
-
----
-
-# Repository structure
+For example:
 
 ```text
-shape-of-estimation/
-│
-├── README.md
-├── LICENSE
-├── pyproject.toml
-│
-├── src/
-│   └── shape_estimation/
-│       │
-│       ├── spaces/
-│       │   ├── base.py
-│       │   ├── euclidean.py
-│       │   ├── sphere.py
-│       │   ├── hyperbolic.py
-│       │   ├── simplex.py
-│       │   └── spd.py
-│       │
-│       ├── estimators/
-│       │   ├── base.py
-│       │   ├── frechet.py
-│       │   ├── geometric_median.py
-│       │   ├── huber.py
-│       │   ├── extrinsic.py
-│       │   ├── kde.py
-│       │   └── barycenter.py
-│       │
-│       ├── distributions/
-│       │   ├── directional.py
-│       │   ├── mixtures.py
-│       │   └── simplex.py
-│       │
-│       ├── perturbations/
-│       │   ├── contamination.py
-│       │   ├── directional.py
-│       │   ├── adversarial.py
-│       │   └── label_noise.py
-│       │
-│       ├── metrics/
-│       │   ├── risk.py
-│       │   ├── influence.py
-│       │   ├── stability.py
-│       │   └── calibration.py
-│       │
-│       ├── experiments/
-│       │   ├── runner.py
-│       │   ├── sweep.py
-│       │   └── registry.py
-│       │
-│       └── visualization/
-│           ├── sphere.py
-│           ├── simplex.py
-│           ├── landscapes.py
-│           ├── trajectories.py
-│           └── phase_diagram.py
-│
-├── experiments/
-│   │
-│   ├── 01_geometry_of_influence/
-│   │   ├── config.yaml
-│   │   ├── run.py
-│   │   └── README.md
-│   │
-│   ├── 02_intrinsic_vs_extrinsic/
-│   │   ├── config.yaml
-│   │   └── run.py
-│   │
-│   ├── 03_kde_under_curvature/
-│   │   ├── config.yaml
-│   │   └── run.py
-│   │
-│   ├── 04_wasserstein_averaging/
-│   │   ├── config.yaml
-│   │   └── run.py
-│   │
-│   └── 05_deceptive_beliefs/
-│       ├── config.yaml
-│       └── run.py
-│
-├── notebooks/
-│   ├── 01_frechet_mean.ipynb
-│   ├── 02_influence_geometry.ipynb
-│   ├── 03_manifold_kde.ipynb
-│   ├── 04_wasserstein_barycenters.ipynb
-│   └── 05_belief_simplex.ipynb
-│
-├── tests/
-│   ├── test_estimators.py
-│   ├── test_spaces.py
-│   └── test_reproducibility.py
-│
-├── results/
-│   ├── raw/
-│   ├── aggregated/
-│   └── figures/
-│
-└── scripts/
-    ├── reproduce_figure_1.py
-    ├── reproduce_figure_2.py
-    └── reproduce_all.py
+clean data
+
+       ● ●
+    ●       ●
+       ★
+
+small contamination
+
+       ● ●
+    ●       ●
+       ★  →
+
+large contamination
+
+       ● ●
+    ●       ●
+             → ★
+                  × × ×
 ```
 
----
+Here:
 
-# Installation
+* `●` = clean observations
+* `×` = contaminating observations
+* `★` = estimated center
 
-Python 3.11+ is recommended.
+The path of `★` is the object of interest.
 
-```bash
-git clone <repository>
-cd shape-of-estimation
 
-python -m venv .venv
-source .venv/bin/activate
+### Error Curve
 
-pip install -e .
+For each estimator, we measure
+
+```math
+\epsilon
+\longrightarrow
+d(\hat{\theta}_{\epsilon},\theta^\star).
 ```
 
-Development installation:
+This produces a traditional robustness curve.
 
-```bash
-pip install -e ".[dev]"
+
+### Objectives
+
+For the Fréchet mean, define
+
+```math
+F(\theta)
+=
+\frac{1}{n}
+\sum_{i=1}^{n}
+d^2(X_i,\theta).
 ```
 
----
+Instead of showing only the minimizing point, we visualize the full objective surface.
 
-# Dependencies
+This helps explain why the estimate moves.
 
-A minimal `pyproject.toml` can begin with:
 
-```toml
-[project]
-name = "shape-estimation"
-version = "0.1.0"
-description = "Visual experiments in geometry-aware statistical estimation and robustness."
-requires-python = ">=3.11"
 
-dependencies = [
-    "numpy",
-    "scipy",
-    "pandas",
-    "matplotlib",
-    "scikit-learn",
-    "geomstats",
-    "pot",
-    "pyyaml",
-    "tqdm",
-]
+### Influence Direction
 
-[project.optional-dependencies]
-dev = [
-    "pytest",
-    "ruff",
-    "jupyter",
-]
+A small contamination can be approximated through
 
-optimization = [
-    "pymanopt",
-]
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-
-[tool.ruff]
-line-length = 100
+```math
+I_{\epsilon}
+=
+\frac{1}{\epsilon}
+\log_{\hat{\theta}_0}
+(\hat{\theta}_{\epsilon}).
 ```
 
----
+This produces a tangent vector describing:
 
-# Minimal example
+* how strongly the estimator moves
+* in which direction it moves
 
-The following example generates observations on \(S^2\), estimates their intrinsic Fréchet mean, and visualizes the result.
+This gives a geometric analogue of an influence function.
+
+
+## Minimal Example
+
+The following example estimates a Fréchet mean on the sphere.
 
 ```python
 import matplotlib.pyplot as plt
@@ -574,8 +280,6 @@ import numpy as np
 from geomstats.geometry.hypersphere import Hypersphere
 from geomstats.learning.frechet_mean import FrechetMean
 
-
-rng = np.random.default_rng(7)
 
 sphere = Hypersphere(dim=2)
 
@@ -590,14 +294,16 @@ X = sphere.random_von_mises_fisher(
 estimator = FrechetMean(sphere)
 estimator.fit(X)
 
-frechet_mean = estimator.estimate_
+estimated_center = estimator.estimate_
+
+error = sphere.metric.dist(
+    estimated_center,
+    true_center,
+)
 
 print("True center:", true_center)
-print("Estimated center:", frechet_mean)
-print(
-    "Intrinsic error:",
-    sphere.metric.dist(true_center, frechet_mean),
-)
+print("Estimated center:", estimated_center)
+print("Intrinsic error:", error)
 
 
 fig = plt.figure(figsize=(7, 7))
@@ -616,11 +322,11 @@ ax.scatter(
     *true_center,
     s=120,
     marker="*",
-    label="population center",
+    label="true center",
 )
 
 ax.scatter(
-    *frechet_mean,
+    *estimated_center,
     s=100,
     marker="X",
     label="Fréchet mean",
@@ -628,18 +334,17 @@ ax.scatter(
 
 ax.set_box_aspect((1, 1, 1))
 ax.legend()
+
 plt.show()
 ```
 
 ---
 
-# Estimator interface
+## Estimator Interface
 
-Every estimator should expose the same conceptual interface.
+Estimators use a common interface so that experiments do not depend on a particular implementation.
 
 ```python
-from __future__ import annotations
-
 from dataclasses import dataclass
 from typing import Any, Protocol
 
@@ -653,6 +358,7 @@ class Estimate:
 
 
 class Estimator(Protocol):
+
     name: str
 
     def fit(
@@ -663,119 +369,121 @@ class Estimator(Protocol):
         ...
 ```
 
-This allows experiments to remain estimator-agnostic.
+Example:
 
 ```python
 estimators = [
     FrechetEstimator(),
     GeometricMedian(),
     HuberLocation(delta=0.4),
-    ExtrinsicMean(),
 ]
 
 for estimator in estimators:
-    result = estimator.fit(X, space=sphere)
+
+    result = estimator.fit(
+        X,
+        space=sphere,
+    )
+
+    print(
+        estimator.name,
+        result.point,
+    )
 ```
 
----
 
-# Fréchet mean
+## Fréchet Mean
 
-The Fréchet estimator solves
+The Fréchet mean solves
 
-$$
-\hat\theta_F
+```math
+\hat{\theta}
 =
-\arg\min_\theta
-\sum_i
-d^2(X_i,\theta).
-$$
+\arg\min_{\theta}
+\sum_i d^2(X_i,\theta).
+```
 
-Wrapper:
+Implementation:
 
 ```python
 import numpy as np
 
 from geomstats.learning.frechet_mean import FrechetMean
 
-from shape_estimation.estimators.base import Estimate
-
 
 class FrechetEstimator:
+
     name = "frechet_mean"
 
-    def __init__(self, method: str = "adaptive"):
+    def __init__(self, method="adaptive"):
         self.method = method
 
     def fit(self, X, space):
-        model = FrechetMean(
+
+        estimator = FrechetMean(
             space,
             method=self.method,
         )
 
-        model.fit(X)
+        estimator.fit(X)
 
-        point = np.asarray(model.estimate_)
-
-        objective = np.mean(
-            np.asarray(
-                space.metric.squared_dist(
-                    point,
-                    X,
-                )
-            )
+        point = np.asarray(
+            estimator.estimate_
         )
 
         return Estimate(
             point=point,
             diagnostics={
-                "objective": float(objective),
                 "method": self.method,
             },
         )
 ```
 
----
 
-# Riemannian geometric median
 
-The intrinsic geometric median solves
+## Geometric Median
 
-$$
-\hat\theta_{\mathrm{GM}}
+The geometric median solves
+
+```math
+\hat{\theta}
 =
-\arg\min_\theta
-\sum_i
-d(X_i,\theta).
-$$
+\arg\min_{\theta}
+\sum_i d(X_i,\theta).
+```
 
-A simple generalized Weiszfeld-style implementation:
+A simple manifold version can be implemented with iterative tangent-space updates.
 
 ```python
 import numpy as np
 
-from shape_estimation.estimators.base import Estimate
-
 
 class GeometricMedian:
+
     name = "geometric_median"
 
     def __init__(
         self,
-        max_iter: int = 256,
-        tol: float = 1e-7,
-        eps: float = 1e-8,
+        max_iter=200,
+        tol=1e-7,
+        eps=1e-8,
     ):
         self.max_iter = max_iter
         self.tol = tol
         self.eps = eps
 
     def fit(self, X, space):
-        current = np.asarray(X[0]).copy()
+
+        current = np.asarray(
+            X[0]
+        ).copy()
 
         converged = False
 
-        for iteration in range(self.max_iter):
+        for iteration in range(
+            self.max_iter
+        ):
+
             distances = np.asarray(
                 space.metric.dist(
                     current,
@@ -783,9 +491,12 @@ class GeometricMedian:
                 )
             )
 
-            weights = 1.0 / np.maximum(
-                distances,
-                self.eps,
+            weights = (
+                1.0
+                / np.maximum(
+                    distances,
+                    self.eps,
+                )
             )
 
             tangent_vectors = np.asarray(
@@ -796,21 +507,21 @@ class GeometricMedian:
             )
 
             direction = np.sum(
-                weights.reshape((-1,) + (1,) * (tangent_vectors.ndim - 1))
+                weights[:, None]
                 * tangent_vectors,
                 axis=0,
             )
 
-            direction /= np.sum(weights)
+            direction /= weights.sum()
 
-            step_norm = float(
+            step_size = float(
                 space.metric.norm(
                     direction,
                     current,
                 )
             )
 
-            if step_norm < self.tol:
+            if step_size < self.tol:
                 converged = True
                 break
 
@@ -821,74 +532,48 @@ class GeometricMedian:
                 )
             )
 
-        objective = np.sum(
-            np.asarray(
-                space.metric.dist(
-                    current,
-                    X,
-                )
-            )
-        )
-
         return Estimate(
             point=current,
             diagnostics={
-                "objective": float(objective),
                 "iterations": iteration + 1,
                 "converged": converged,
             },
         )
 ```
 
-This implementation is intended as a transparent research baseline.
 
-Production experiments should explicitly handle degenerate cases in which an iterate approaches an observation.
 
----
+## Huber Location Estimator
 
-# Riemannian Huber estimator
+The Huber loss is
 
-Define the robust loss
-
-$$
+```math
 \rho_\delta(r)
 =
 \begin{cases}
-\frac12r^2,
-&
-r\leq\delta,
-\\
-\delta r-\frac12\delta^2,
-&
-r>\delta.
+\frac{1}{2}r^2,
+& r \leq \delta \\
+\delta r-\frac{1}{2}\delta^2,
+& r > \delta.
 \end{cases}
-$$
+```
 
-The corresponding weight behaves approximately as
-
-$$
-w(r)
-=
-\min\left(1,\frac{\delta}{r}\right).
-$$
-
-Implementation:
+A corresponding manifold estimator can use distance-dependent weights.
 
 ```python
 import numpy as np
 
-from shape_estimation.estimators.base import Estimate
-
 
 class HuberLocation:
+
     name = "huber"
 
     def __init__(
         self,
-        delta: float = 0.5,
-        max_iter: int = 256,
-        tol: float = 1e-7,
-        eps: float = 1e-8,
+        delta=0.5,
+        max_iter=200,
+        tol=1e-7,
+        eps=1e-8,
     ):
         self.delta = delta
         self.max_iter = max_iter
@@ -896,11 +581,17 @@ class HuberLocation:
         self.eps = eps
 
     def fit(self, X, space):
-        current = np.asarray(X[0]).copy()
+
+        current = np.asarray(
+            X[0]
+        ).copy()
 
         converged = False
 
-        for iteration in range(self.max_iter):
+        for iteration in range(
+            self.max_iter
+        ):
+
             distances = np.asarray(
                 space.metric.dist(
                     current,
@@ -910,7 +601,11 @@ class HuberLocation:
 
             weights = np.minimum(
                 1.0,
-                self.delta / np.maximum(distances, self.eps),
+                self.delta
+                / np.maximum(
+                    distances,
+                    self.eps,
+                ),
             )
 
             tangent_vectors = np.asarray(
@@ -920,21 +615,22 @@ class HuberLocation:
                 )
             )
 
-            reshape = (-1,) + (1,) * (tangent_vectors.ndim - 1)
-
             direction = np.sum(
-                weights.reshape(reshape) * tangent_vectors,
+                weights[:, None]
+                * tangent_vectors,
                 axis=0,
-            ) / np.sum(weights)
+            )
 
-            step_norm = float(
+            direction /= weights.sum()
+
+            step_size = float(
                 space.metric.norm(
                     direction,
                     current,
                 )
             )
 
-            if step_norm < self.tol:
+            if step_size < self.tol:
                 converged = True
                 break
 
@@ -945,25 +641,9 @@ class HuberLocation:
                 )
             )
 
-        distances = np.asarray(
-            space.metric.dist(
-                current,
-                X,
-            )
-        )
-
-        quadratic = distances <= self.delta
-
-        loss = np.where(
-            quadratic,
-            0.5 * distances**2,
-            self.delta * distances - 0.5 * self.delta**2,
-        )
-
         return Estimate(
             point=current,
             diagnostics={
-                "objective": float(np.sum(loss)),
                 "iterations": iteration + 1,
                 "converged": converged,
                 "delta": self.delta,
@@ -971,54 +651,33 @@ class HuberLocation:
         )
 ```
 
----
+## Extrinsic Mean
 
-# Extrinsic mean
-
-For an embedded manifold
-
-$$
-\mathcal M
-\subset
-\mathbb R^D,
-$$
-
-an extrinsic estimator first averages in the ambient Euclidean space and then projects back onto the manifold.
-
-For \(S^{d}\),
-
-$$
-\hat\mu_{\text{ext}}
-=
-\frac{
-\sum_i X_i
-}{
-\left\|
-\sum_i X_i
-\right\|
-}.
-$$
+For points on the sphere, the extrinsic estimator computes the Euclidean mean and projects it back onto the sphere.
 
 ```python
 import numpy as np
 
-from shape_estimation.estimators.base import Estimate
-
 
 class ExtrinsicSphereMean:
+
     name = "extrinsic_mean"
 
     def fit(self, X, space):
-        ambient_mean = np.mean(X, axis=0)
 
-        norm = np.linalg.norm(ambient_mean)
+        mean = np.mean(
+            X,
+            axis=0,
+        )
+
+        norm = np.linalg.norm(mean)
 
         if norm < 1e-12:
             raise ValueError(
-                "Extrinsic mean is undefined because the ambient mean is approximately zero."
+                "Extrinsic mean is undefined."
             )
 
-        point = ambient_mean / norm
+        point = mean / norm
 
         return Estimate(
             point=point,
@@ -1028,67 +687,30 @@ class ExtrinsicSphereMean:
         )
 ```
 
-One important experiment is therefore simply
-
-$$
-d(
-\hat\mu_{\mathrm{ext}},
-\hat\mu_F
-)
-$$
-
-as the distribution becomes broader or the geometry becomes more important.
-
----
-
-# Contamination models
-
-Contamination should be treated as a first-class object.
-
-```python
-from typing import Protocol
-
-import numpy as np
+This allows direct comparison between intrinsic and extrinsic estimation.
 
 
-class Perturbation(Protocol):
-    def apply(
-        self,
-        X: np.ndarray,
-        epsilon: float,
-        **kwargs,
-    ) -> np.ndarray:
-        ...
-```
+## Contamination Models
 
----
+Contamination is treated as part of the experiment rather than hidden preprocessing.
 
-## Directional contamination on the sphere
-
-Suppose the population is centered around
-
-$$
-\theta^\star.
-$$
-
-A strong adversarial direction is the antipode
-
-$$
--\theta^\star.
-$$
+A simple directional contamination model on the sphere places outliers close to the antipode of the true center.
 
 ```python
 import numpy as np
 
 
 class AntipodalContamination:
+
     def __init__(
         self,
-        kappa: float = 80.0,
-        seed: int = 0,
+        kappa=80.0,
+        seed=0,
     ):
         self.kappa = kappa
-        self.rng = np.random.default_rng(seed)
+        self.rng = np.random.default_rng(
+            seed
+        )
 
     def apply(
         self,
@@ -1098,24 +720,37 @@ class AntipodalContamination:
         space,
         true_center,
     ):
-        X_new = np.array(X, copy=True)
+
+        X_new = np.array(
+            X,
+            copy=True,
+        )
 
         n = len(X_new)
-        k = int(round(epsilon * n))
 
-        if k == 0:
+        n_outliers = int(
+            round(
+                epsilon * n
+            )
+        )
+
+        if n_outliers == 0:
             return X_new
 
         indices = self.rng.choice(
             n,
-            size=k,
+            size=n_outliers,
             replace=False,
         )
 
-        outliers = space.random_von_mises_fisher(
-            mu=-np.asarray(true_center),
-            kappa=self.kappa,
-            n_samples=k,
+        outliers = (
+            space.random_von_mises_fisher(
+                mu=-np.asarray(
+                    true_center
+                ),
+                kappa=self.kappa,
+                n_samples=n_outliers,
+            )
         )
 
         X_new[indices] = outliers
@@ -1123,25 +758,13 @@ class AntipodalContamination:
         return X_new
 ```
 
-This creates a controlled path from clean to adversarial data.
 
----
+## Contamination Sweep
 
-# Experiment runner
-
-The experiment runner should separate simulation from visualization.
+Experiments compare estimators over increasing contamination levels.
 
 ```python
-from dataclasses import dataclass
-
 import pandas as pd
-
-
-@dataclass
-class ExperimentConfig:
-    epsilons: list[float]
-    trials: int
-    sample_size: int
 
 
 def run_contamination_sweep(
@@ -1151,19 +774,23 @@ def run_contamination_sweep(
     perturbation,
     space,
     true_center,
-    config,
+    epsilons,
+    trials,
+    sample_size,
 ):
+
     rows = []
 
-    for epsilon in config.epsilons:
-        for trial in range(config.trials):
+    for epsilon in epsilons:
+
+        for trial in range(trials):
 
             X = X_sampler(
-                config.sample_size,
+                sample_size,
                 trial,
             )
 
-            X_eps = perturbation.apply(
+            X_noisy = perturbation.apply(
                 X,
                 epsilon,
                 space=space,
@@ -1171,8 +798,9 @@ def run_contamination_sweep(
             )
 
             for estimator in estimators:
+
                 result = estimator.fit(
-                    X_eps,
+                    X_noisy,
                     space,
                 )
 
@@ -1187,20 +815,20 @@ def run_contamination_sweep(
                     {
                         "epsilon": epsilon,
                         "trial": trial,
-                        "estimator": estimator.name,
+                        "estimator": (
+                            estimator.name
+                        ),
                         "error": error,
-                        **result.diagnostics,
                     }
                 )
 
     return pd.DataFrame(rows)
 ```
 
----
 
-# Reproducible experiment configuration
+## Experiment Configuration
 
-`experiments/01_geometry_of_influence/config.yaml`
+Example:
 
 ```yaml
 experiment:
@@ -1220,6 +848,7 @@ sample:
 
 contamination:
   type: antipodal
+
   epsilon:
     - 0.00
     - 0.01
@@ -1231,46 +860,47 @@ contamination:
     - 0.25
 
 estimators:
-  - name: frechet_mean
-
-  - name: geometric_median
-
-  - name: huber
-    delta: 0.40
-
-  - name: extrinsic_mean
+  - frechet_mean
+  - geometric_median
+  - huber
+  - extrinsic_mean
 
 evaluation:
   trials: 100
-
-outputs:
-  save_raw: true
-  save_aggregated: true
-  save_figures: true
 ```
 
----
 
-# Risk curves
-
-Given experiment results:
+## Risk Curves
 
 ```python
 import matplotlib.pyplot as plt
 
 
 def plot_risk_curves(df):
+
     summary = (
-        df.groupby(
-            ["epsilon", "estimator"],
+        df
+        .groupby(
+            [
+                "epsilon",
+                "estimator",
+            ],
             as_index=False,
         )
-        .error.mean()
+        .error
+        .mean()
     )
 
-    fig, ax = plt.subplots(figsize=(8, 5))
+    fig, ax = plt.subplots(
+        figsize=(8, 5)
+    )
 
-    for estimator, group in summary.groupby("estimator"):
+    for estimator, group in (
+        summary.groupby(
+            "estimator"
+        )
+    ):
+
         ax.plot(
             group["epsilon"],
             group["error"],
@@ -1278,322 +908,157 @@ def plot_risk_curves(df):
             label=estimator,
         )
 
-    ax.set_xlabel("Contamination fraction")
-    ax.set_ylabel("Mean intrinsic estimation error")
-    ax.set_title("Estimator robustness under contamination")
+    ax.set_xlabel(
+        "Contamination fraction"
+    )
+
+    ax.set_ylabel(
+        "Mean intrinsic error"
+    )
+
+    ax.set_title(
+        "Estimator robustness"
+    )
+
     ax.legend()
 
     return fig, ax
 ```
 
-The important output is the functional relationship
 
-$$
-\epsilon
-\mapsto
-\mathbb E[
-d(\hat\theta_\epsilon,\theta^\star)
-].
-$$
+## Experiment 2: Intrinsic vs Extrinsic Estimation
 
----
+This experiment studies when Euclidean approximations stop working well.
 
-# Estimator trajectories
+We compare:
 
-Risk curves destroy directional information.
+* intrinsic Fréchet mean
+* extrinsic projected mean
 
-The trajectory itself contains substantially more structure:
+and measure
 
-$$
-\hat\theta_0,
-\hat\theta_{0.01},
-\hat\theta_{0.02},
-\dots
-$$
-
-For a sphere:
-
-```python
-import matplotlib.pyplot as plt
-import numpy as np
-
-
-def plot_sphere_trajectory(
-    trajectory,
-    observations=None,
-):
-    trajectory = np.asarray(trajectory)
-
-    fig = plt.figure(figsize=(8, 8))
-    ax = fig.add_subplot(
-        111,
-        projection="3d",
-    )
-
-    if observations is not None:
-        observations = np.asarray(observations)
-
-        ax.scatter(
-            observations[:, 0],
-            observations[:, 1],
-            observations[:, 2],
-            s=8,
-            alpha=0.25,
-        )
-
-    ax.plot(
-        trajectory[:, 0],
-        trajectory[:, 1],
-        trajectory[:, 2],
-        marker="o",
-    )
-
-    ax.scatter(
-        *trajectory[0],
-        marker="*",
-        s=150,
-        label="clean estimate",
-    )
-
-    ax.scatter(
-        *trajectory[-1],
-        marker="X",
-        s=120,
-        label="final estimate",
-    )
-
-    ax.set_box_aspect((1, 1, 1))
-    ax.legend()
-
-    return fig, ax
-```
-
-The geometry of this path can itself become an object of study.
-
-For example, define path length
-
-$$
-L_T
-=
-\sum_j
+```math
 d(
-\hat\theta_{\epsilon_j},
-\hat\theta_{\epsilon_{j+1}}
+\hat{\theta}_{\text{intrinsic}},
+\hat{\theta}_{\text{extrinsic}}
 ).
-$$
-
-This distinguishes a smoothly degrading estimator from one that undergoes abrupt transitions.
-
----
-
-# Local sensitivity
-
-A finite-difference approximation to the manifold-valued influence function is
-
-$$
-I_\epsilon
-=
-\frac1\epsilon
-\log_{\hat\theta_0}
-\hat\theta_\epsilon.
-$$
-
-```python
-import numpy as np
-
-
-def approximate_influence(
-    *,
-    clean_estimate,
-    contaminated_estimate,
-    epsilon,
-    space,
-):
-    tangent = np.asarray(
-        space.metric.log(
-            point=contaminated_estimate,
-            base_point=clean_estimate,
-        )
-    )
-
-    return tangent / epsilon
 ```
 
-Its magnitude is
+We vary:
 
-$$
-\|I_\epsilon\|_{\hat\theta_0}.
-$$
-
-```python
-def influence_norm(
-    influence,
-    *,
-    base_point,
-    space,
-):
-    return float(
-        space.metric.norm(
-            influence,
-            base_point,
-        )
-    )
-```
-
-This makes robustness directly visualizable in the tangent space.
-
----
-
-# Experiment 02 — Intrinsic versus extrinsic estimation
-
-The second experiment asks a deliberately simple question:
-
-> When does pretending that curved data are Euclidean become statistically expensive?
-
-For a manifold-valued distribution \(P\), compare
-
-$$
-\hat\theta_{\text{intrinsic}}
-$$
-
-and
-
-$$
-\hat\theta_{\text{extrinsic}}.
-$$
-
-Study
-
-$$
-D(P)
-=
-d(
-\hat\theta_{\text{intrinsic}},
-\hat\theta_{\text{extrinsic}}
-).
-$$
-
-Vary:
-
-* concentration
-* multimodality
+* sample concentration
 * sample size
-* distance from a geodesically convex neighborhood
+* multimodality
 * contamination
 
-A useful output is:
+The main question is:
 
-$$
-\text{dispersion}
-\mapsto
-D(P).
-$$
+> How far can the data spread before the geometry becomes important?
 
-The expected phenomenon is that local Euclidean approximations are often reasonable for sufficiently concentrated distributions, while differences become increasingly visible as observations explore larger regions of the manifold.
 
-The experiment should determine where that transition actually occurs.
+## Experiment 3: KDE Under Geometry
 
----
+Standard KDE uses Euclidean distance:
 
-# Experiment 03 — KDE under geometry
-
-For Euclidean KDE,
-
-$$
-\hat f_h(x)
+```math
+\hat{f}_h(x)
 =
-\frac1{nh^d}
+\frac{1}{nh^d}
 \sum_i
-K\left(
+K
+\left(
 \frac{\|x-X_i\|}{h}
 \right).
-$$
+```
 
-A geometry-aware kernel instead uses intrinsic distance:
+A geometry-aware version replaces Euclidean distance with intrinsic distance:
 
-$$
-\hat f_h^{\mathcal M}(x)
+```math
+\hat{f}^{M}_h(x)
 \propto
 \sum_i
-K\left(
-\frac{d_{\mathcal M}(x,X_i)}{h}
-\right).
-$$
-
-The central question becomes:
-
-$$
-\boxed{
-\text{At what statistical scale does the metric matter?}
-}
-$$
-
-Study
-
-$$
-D(h,P)
-=
-D_{\mathrm{KL}}
+K
 \left(
-\hat f_h^{\text{intrinsic}}
-\|
-\hat f_h^{\text{extrinsic}}
-\right)
-$$
+\frac{d_M(x,X_i)}{h}
+\right).
+```
 
-or another appropriate divergence.
+The experiment asks:
 
-Primary visualization:
+> At what scale does using the wrong geometry meaningfully distort density estimation?
 
-$$
-(h,\text{dispersion})
-\mapsto
-D(h,P).
-$$
+We vary:
 
----
+* bandwidth
+* curvature
+* dispersion
+* sample size
 
-# Experiment 04 — The geometry of averaging distributions
 
-Arithmetic averaging of probability vectors and Wasserstein averaging encode different notions of interpolation.
+## Experiment 4: Wasserstein Averaging
 
-Given distributions
+Suppose we want to estimate an average distribution.
 
-$$
-P_1,\ldots,P_k,
-$$
+An arithmetic mixture is
 
-the Wasserstein barycenter solves
+```math
+\bar{P}
+=
+\frac{1}{K}
+\sum_i P_i.
+```
 
-$$
+A Wasserstein barycenter instead solves
+
+```math
 P^\star
 =
 \arg\min_P
-\sum_j
-\lambda_j
-W_2^2(P,P_j).
-$$
+\sum_i
+\lambda_i
+W_2^2(P,P_i).
+```
 
-A simple discrete example:
+These represent different notions of averaging.
+
+Example:
 
 ```python
 import numpy as np
 import ot
 
 
-grid = np.linspace(-5.0, 5.0, 200)
+grid = np.linspace(
+    -5.0,
+    5.0,
+    200,
+)
 
-dx = grid[:, None] - grid[None, :]
-cost = dx**2
+difference = (
+    grid[:, None]
+    - grid[None, :]
+)
+
+cost = difference ** 2
 
 
-def gaussian_histogram(mean, sigma):
+def gaussian_histogram(
+    mean,
+    sigma,
+):
+
     density = np.exp(
         -0.5
-        * ((grid - mean) / sigma) ** 2
+        * (
+            (grid - mean)
+            / sigma
+        ) ** 2
     )
 
-    return density / density.sum()
+    return (
+        density
+        / density.sum()
+    )
 
 
 p1 = gaussian_histogram(
@@ -1606,74 +1071,68 @@ p2 = gaussian_histogram(
     sigma=0.6,
 )
 
-A = np.column_stack(
+distributions = np.column_stack(
     [p1, p2]
 )
 
-barycenter = ot.barycenter(
-    A,
+wasserstein_average = ot.barycenter(
+    distributions,
     cost,
     reg=1e-2,
 )
 
-linear_average = 0.5 * p1 + 0.5 * p2
+linear_average = (
+    0.5 * p1
+    + 0.5 * p2
+)
 ```
 
-The resulting distributions answer two different questions.
-
-The arithmetic mixture asks:
-
-> What distribution results from randomly selecting one source distribution?
-
-The Wasserstein barycenter asks:
-
-> What distribution lies geometrically between them under transportation cost?
-
-This experiment visualizes that difference.
+The visualization compares how probability mass moves under the two notions of averaging.
 
 ---
 
-# Experiment 05 — Strategic belief geometry
+## Experiment 5: Strategic Belief Geometry
 
-This is the bridge from geometric statistics to multi-agent reasoning.
+This experiment connects geometric statistics to multi-agent reasoning.
 
-Suppose an opponent has one of \(K\) latent behavioral modes.
+Suppose another agent has three possible behavioral modes:
 
-Represent our current estimate as
+```text
+cooperative
+opportunistic
+adversarial
+```
 
-$$
-\theta
-=
-(\theta_1,\ldots,\theta_K)
-\in
-\Delta^{K-1}.
-$$
+Our belief is
 
-For \(K=3\), the entire belief state is visible inside a triangle.
-
-For example:
-
-$$
+```math
 \theta
 =
 (
-P(\text{cooperative}),
-P(\text{opportunistic}),
-P(\text{adversarial})
+p_{\text{coop}},
+p_{\text{opp}},
+p_{\text{adv}}
 ).
-$$
+```
 
-Every observation updates the estimator:
+Because
 
-$$
-\hat\theta_t
+```math
+p_{\text{coop}}
++
+p_{\text{opp}}
++
+p_{\text{adv}}
 =
-T(a_{1:t}).
-$$
+1,
+```
 
----
+the belief lies on a probability simplex.
 
-## Simple Bayesian baseline
+A sequence of observations creates a trajectory through this space.
+
+
+### Bayesian Baseline
 
 ```python
 import numpy as np
@@ -1683,19 +1142,18 @@ def bayesian_update(
     prior,
     likelihood,
 ):
+
     posterior = (
         prior
         * likelihood
     )
 
-    total = posterior.sum()
+    posterior = (
+        posterior
+        / posterior.sum()
+    )
 
-    if total <= 0:
-        raise ValueError(
-            "Posterior has zero mass."
-        )
-
-    return posterior / total
+    return posterior
 ```
 
 Sequential inference:
@@ -1705,13 +1163,17 @@ theta = np.array(
     [0.33, 0.34, 0.33]
 )
 
-trajectory = [theta.copy()]
+trajectory = [
+    theta.copy()
+]
 
 for observation in observations:
 
-    likelihood = observation_model[
-        observation
-    ]
+    likelihood = (
+        observation_model[
+            observation
+        ]
+    )
 
     theta = bayesian_update(
         theta,
@@ -1723,129 +1185,47 @@ for observation in observations:
     )
 ```
 
----
 
-## Deceptive observations
+### Deceptive Observations
 
-Now suppose observations are generated strategically.
+Now suppose another agent chooses actions partly because of how those actions will affect our beliefs.
 
-A deceptive agent may choose action \(a_t\) according to
+The observation process is no longer passive.
 
-$$
-a_t
-=
-\arg\max_a
-\mathbb E
-\left[
-U_j
-\mid
-\text{belief update caused by }a
-\right].
-$$
+An action may depend on:
 
-The observation process is therefore endogenous.
+* the opponent's true type
+* the opponent's objective
+* the opponent's belief about us
+* the belief they want us to form
 
-The inferential model
+The inference problem becomes:
 
-$$
-P(a_t\mid\theta)
-$$
-
-is misspecified because
-
-$$
-P(a_t\mid\theta)
-$$
-
-also depends on what the other agent believes **we will infer from the action**.
-
-This creates the research problem:
-
-$$
+```math
 P(
 a_t
 \mid
-\theta_j,
-b_j(\theta_i),
+\text{type},
+\text{beliefs},
 \text{strategic objective}
 ).
-$$
+```
 
 The experiment asks:
 
-> Which estimators recover most quickly after strategically selected misleading evidence?
+> How quickly can different estimators recover after strategically misleading evidence?
 
-Metrics include:
+Useful metrics include:
 
-### Recovery time
+* maximum belief displacement
+* recovery time
+* cumulative belief error
+* downstream strategic regret
 
-$$
-\tau_\delta
-=
-\min
-\left\{
-t:
-d(
-\hat\theta_t,
-\theta^\star
-)
-<
-\delta
-\right\}.
-$$
 
-### Maximum belief displacement
+## Simplex Visualization
 
-$$
-D_{\max}
-=
-\max_t
-d(
-\hat\theta_t,
-\theta^\star
-).
-$$
-
-### Cumulative belief error
-
-$$
-R_T
-=
-\sum_{t=1}^{T}
-d^2(
-\hat\theta_t,
-\theta^\star
-).
-$$
-
-### Strategic regret
-
-If beliefs control actions,
-
-$$
-\operatorname{Regret}_T
-=
-\sum_{t=1}^{T}
-\left[
-U(a_t^\star)
--
-U(a_t)
-\right].
-$$
-
-This connects estimation quality to downstream decision quality.
-
----
-
-# Visualizing the probability simplex
-
-For three latent types,
-
-$$
-\theta_1+\theta_2+\theta_3=1.
-$$
-
-Map simplex coordinates into \(\mathbb R^2\):
+For three latent types, beliefs can be mapped into a triangle.
 
 ```python
 import numpy as np
@@ -1855,26 +1235,37 @@ SIMPLEX_VERTICES = np.array(
     [
         [0.0, 0.0],
         [1.0, 0.0],
-        [0.5, np.sqrt(3.0) / 2.0],
+        [
+            0.5,
+            np.sqrt(3.0) / 2.0,
+        ],
     ]
 )
 
 
-def simplex_to_cartesian(theta):
-    theta = np.asarray(theta)
+def simplex_to_cartesian(
+    theta,
+):
+
+    theta = np.asarray(
+        theta
+    )
 
     if not np.isclose(
         theta.sum(),
         1.0,
     ):
         raise ValueError(
-            "Simplex coordinates must sum to one."
+            "Beliefs must sum to one."
         )
 
-    return theta @ SIMPLEX_VERTICES
+    return (
+        theta
+        @ SIMPLEX_VERTICES
+    )
 ```
 
-Then plot the belief trajectory:
+Plotting the sequence produces a direct visualization of belief movement.
 
 ```python
 import matplotlib.pyplot as plt
@@ -1884,14 +1275,14 @@ import numpy as np
 def plot_belief_trajectory(
     trajectory,
 ):
-    trajectory = np.asarray(
-        trajectory
-    )
 
     xy = np.vstack(
         [
-            simplex_to_cartesian(theta)
-            for theta in trajectory
+            simplex_to_cartesian(
+                theta
+            )
+            for theta
+            in trajectory
         ]
     )
 
@@ -1938,210 +1329,83 @@ def plot_belief_trajectory(
     return fig, ax
 ```
 
-The resulting path provides a direct geometric representation of how evidence changes social belief.
-
 ---
 
-# Benchmark matrix
+## Evaluation
 
-The repository is organized around a matrix of controlled comparisons.
+Each experiment should report several views of estimator behavior.
 
-| Experiment             | Geometry                        | Estimator                 | Perturbation                 | Main question                                       |
-| ---------------------- | ------------------------------- | ------------------------- | ---------------------------- | --------------------------------------------------- |
-| Geometry of Influence  | Sphere / Hyperbolic / Euclidean | Mean / Median / Huber     | Contamination                | How does geometry change robustness?                |
-| Intrinsic vs Extrinsic | Manifolds                       | Fréchet / projected mean  | Dispersion                   | When does ignoring geometry matter?                 |
-| KDE Under Curvature    | Manifolds                       | KDE                       | Bandwidth / misspecification | When does local geometry affect density estimation? |
-| Distribution Averaging | Wasserstein                     | Barycenter / mixture      | Distribution shift           | What does "average" mean for distributions?         |
-| Strategic Beliefs      | Simplex                         | Bayes / robust / adaptive | Deception                    | How do misleading signals distort inferred intent?  |
+### Estimation Error
 
----
-
-# Evaluation philosophy
-
-The project intentionally avoids ranking estimators using one scalar.
-
-Every experiment should report at least four views.
-
-## Statistical risk
-
-$$
+```math
 R
 =
-\mathbb E[
+\mathbb{E}
+\left[
 d^2(
-\hat\theta,
+\hat{\theta},
 \theta^\star
 )
-].
-$$
+\right].
+```
 
-## Variability
+### Perturbation Sensitivity
 
-$$
-\operatorname{Var}_d(
-\hat\theta
-).
-$$
-
-## Perturbation sensitivity
-
-$$
+```math
 S(\epsilon)
 =
 d(
 T(P),
-T(P_\epsilon)
+T(P_{\epsilon})
 ).
-$$
+```
 
-## Geometry of failure
+### Trajectory Length
 
-Where does the estimator move?
+For contamination levels
 
-How quickly?
+```math
+\epsilon_1,\ldots,\epsilon_m,
+```
 
-Along which directions?
+define
 
-Does it degrade continuously?
-
-Does it undergo a qualitative transition?
-
-This last category is often hidden by aggregate metrics.
-
----
-
-# Research hypotheses
-
-The repository distinguishes measured results from hypotheses.
-
-Initial hypotheses include:
-
-### H1
-
-The robustness ordering of location estimators depends on both contamination structure and geometry.
-
-### H2
-
-Extrinsic estimators approximate intrinsic estimators well in sufficiently local regimes, with disagreement increasing as distributions explore larger geometric scales.
-
-### H3
-
-Curvature interacts with contamination direction, producing anisotropic estimator sensitivity.
-
-### H4
-
-Estimator trajectories contain information about robustness that cannot be recovered from final scalar risk alone.
-
-### H5
-
-In strategic inference, robust belief estimators can outperform maximum-likelihood or naive Bayesian estimators when observations are intentionally selected to manipulate inference.
-
-These are hypotheses to test, not conclusions assumed by the codebase.
-
----
-
-# A more interesting notion of robustness
-
-Classical robustness often asks:
-
-> How much does the estimate change?
-
-In structured spaces we can additionally ask:
-
-> In what direction does it change?
-
-Suppose
-
-$$
-v(z)
+```math
+L
 =
-\operatorname{IF}_{\mathcal M}
-(z;T,P)
-\in
-T_{\theta}\mathcal M.
-$$
+\sum_{j=1}^{m-1}
+d(
+\hat{\theta}_{\epsilon_j},
+\hat{\theta}_{\epsilon_{j+1}}
+).
+```
 
-Then contamination produces an **influence vector field**
+### Recovery Time
 
-$$
-z
-\mapsto
-v(z).
-$$
+For sequential inference,
 
-This allows us to study:
-
-* influence magnitude
-* influence direction
-* anisotropy
-* alignment with curvature
-* alignment with downstream decision boundaries
-
-A scalar robustness statistic cannot capture these distinctions.
-
----
-
-# Geometry-aware downstream risk
-
-Statistical distance and decision relevance need not coincide.
-
-Suppose an estimate controls a policy
-
-$$
-\pi(a\mid\hat\theta).
-$$
-
-Two errors
-
-$$
-\delta_1,\delta_2
-$$
-
-may have identical geometric magnitude
-
-$$
-\|\delta_1\|
+```math
+\tau_\delta
 =
-\|\delta_2\|
-$$
-
-but dramatically different strategic consequences.
-
-We therefore distinguish:
-
-$$
-R_{\text{stat}}
-=
-d^2(
-\hat\theta,
+\min
+\left\{
+t:
+d(
+\hat{\theta}_t,
 \theta^\star
 )
-$$
+<
+\delta
+\right\}.
+```
 
-from
 
-$$
-R_{\text{decision}}
-=
-V(\theta^\star)
--
-V(
-\pi(\hat\theta),
-\theta^\star
-).
-$$
-
-This becomes especially important in multi-agent systems.
-
----
-
-# Reproducing experiments
+## Reproducibility
 
 Run one experiment:
 
 ```bash
-python experiments/01_geometry_of_influence/run.py \
-    --config experiments/01_geometry_of_influence/config.yaml
+python experiments/01_geometry_of_influence/run.py
 ```
 
 Run all experiments:
@@ -2150,371 +1414,48 @@ Run all experiments:
 python scripts/reproduce_all.py
 ```
 
-Generate a single figure:
+Generate figures from saved results:
 
 ```bash
-python scripts/reproduce_figure_1.py
+python scripts/reproduce_figures.py
 ```
 
-The repository should never require a notebook to reproduce a paper figure.
+Important results should always be reproducible without running a notebook.
 
-Notebooks are for exploration.
+Notebooks are used for exploration.
 
-Scripts are the source of reproducible results.
+Scripts are used for experiments.
 
 ---
 
-# Results format
+## Result Format
 
-Every experiment writes long-form records.
-
-```text
-results/raw/geometry_of_influence.csv
-```
-
-Example schema:
+Raw experiment output should use long-form records:
 
 ```text
 experiment
 space
 trial
 seed
-n
+sample_size
 epsilon
 estimator
-estimate
 error
 objective
 iterations
-converged
 ```
-
-Aggregated results are generated separately.
-
-```text
-results/aggregated/geometry_of_influence_summary.csv
-```
-
-Figures should be reproducible entirely from saved result files.
-
----
-
-# Reproducibility
-
-Every reported experiment stores:
-
-```python
-metadata = {
-    "seed": seed,
-    "space": space_name,
-    "estimator": estimator_name,
-    "sample_size": n,
-    "contamination": epsilon,
-    "config": config,
-}
-```
-
-Randomness should never depend implicitly on execution order.
-
-Prefer:
-
-```python
-rng = np.random.default_rng(seed)
-```
-
-to global random state whenever possible.
-
-For trial \(j\), derive a deterministic seed:
-
-```python
-trial_seed = base_seed + trial
-```
-
-or use `SeedSequence` for larger experiments.
-
----
-
-# Testing philosophy
-
-Tests should verify mathematical properties whenever possible.
 
 Example:
 
-```python
-import numpy as np
-
-
-def test_frechet_mean_lies_on_sphere(
-    sphere,
-    sphere_sample,
-):
-    estimator = FrechetEstimator()
-
-    result = estimator.fit(
-        sphere_sample,
-        sphere,
-    )
-
-    assert bool(
-        sphere.belongs(
-            result.point
-        )
-    )
-```
-
-Estimator equivariance tests are even more useful.
-
-For a rotation \(R\),
-
-$$
-T(RX)
-\approx
-R\,T(X).
-$$
-
-```python
-def test_rotation_equivariance(
-    sphere,
-    estimator,
-    X,
-    rotation,
-):
-    original = estimator.fit(
-        X,
-        sphere,
-    ).point
-
-    X_rotated = (
-        rotation
-        @ X.T
-    ).T
-
-    transformed = estimator.fit(
-        X_rotated,
-        sphere,
-    ).point
-
-    expected = rotation @ original
-
-    error = sphere.metric.dist(
-        transformed,
-        expected,
-    )
-
-    assert error < 1e-5
-```
-
-This is more informative than testing only numerical outputs for a single fixed sample.
-
----
-
-# Design principles
-
-### 1. Mathematical objects first
-
-A module should correspond to a statistical or geometric concept.
-
-Avoid organization by notebook number or plotting convenience.
-
-### 2. Experiments are hypotheses
-
-Every experiment directory should contain a clear scientific question.
-
-### 3. Geometry stays explicit
-
-Do not silently convert manifold-valued observations into Euclidean coordinates.
-
-### 4. Perturbations are first-class
-
-Noise, contamination, deception, and misspecification should be explicit experimental objects.
-
-### 5. Visualizations expose mechanism
-
-Figures should help explain **why** an estimator behaves differently.
-
-### 6. Reproducibility beats interactivity
-
-Every important result should be reproducible from the command line.
-
-### 7. Baselines stay simple
-
-A strong experiment should survive comparison with simple estimators.
-
-Complexity is justified only when the experiment demonstrates what it buys.
-
----
-
-# What this repository is not
-
-This is not intended to become a catalog of implementations such as:
-
 ```text
-mean.py
-median.py
-kde.py
-mle.py
-map.py
+geometry_of_influence,sphere,0,42,250,0.05,frechet_mean,0.083,...
+geometry_of_influence,sphere,0,42,250,0.05,huber,0.041,...
+geometry_of_influence,sphere,0,42,250,0.05,geometric_median,0.029,...
 ```
 
-The number of estimators implemented is not the contribution.
-
-The project is centered on the comparative question:
-
-$$
-\boxed{
-\text{What changes when the statistical geometry changes?}
-}
-$$
-
-and its robust counterpart:
-
-$$
-\boxed{
-\text{How does an estimator move when the data-generating process is perturbed?}
-}
-$$
+Figures should be generated from saved result files instead of simulation code.
 
 ---
 
-# Roadmap
-
-## v0.1 — Location
-
-* [ ] Fréchet mean
-* [ ] geometric median
-* [ ] Huber location
-* [ ] extrinsic mean
-* [ ] sphere experiments
-* [ ] contamination trajectories
-* [ ] intrinsic risk
-* [ ] estimator trajectory visualization
-* [ ] approximate influence visualization
-
-## v0.2 — Geometry
-
-* [ ] Euclidean comparison
-* [ ] hyperbolic experiments
-* [ ] SPD geometry
-* [ ] intrinsic/extrinsic comparison
-* [ ] curvature × contamination sweeps
-
-## v0.3 — Distribution estimation
-
-* [ ] geometry-aware KDE
-* [ ] bandwidth sweeps
-* [ ] density misspecification experiments
-* [ ] Wasserstein barycenters
-* [ ] barycenter visualization
-
-## v0.4 — Strategic inference
-
-* [ ] simplex belief trajectories
-* [ ] latent opponent types
-* [ ] corrupted observations
-* [ ] deceptive observation policies
-* [ ] robust belief estimators
-* [ ] recovery-time metrics
-* [ ] downstream strategic regret
-
-## v0.5 — Research benchmark
-
-* [ ] standardized experiment registry
-* [ ] reproducible benchmark suite
-* [ ] uncertainty intervals
-* [ ] publication-quality figure pipeline
-* [ ] documented theoretical conjectures
-* [ ] benchmark report
-
----
-
-# Longer-term questions
-
-The project is ultimately interested in several broader questions.
-
-### Geometry × robustness
-
-Can curvature qualitatively change robustness properties?
-
-### Geometry × sample complexity
-
-Does the appropriate geometric inductive bias reduce the number of observations required for reliable estimation?
-
-### Geometry × misspecification
-
-How costly is an incorrect metric?
-
-### Robustness × strategic behavior
-
-How should robust inference change when contamination is chosen by another optimizing agent?
-
-### Estimation × decision-making
-
-When do statistically small errors create strategically large losses?
-
-### Structure × model scale
-
-Can explicitly structured statistical state representations allow smaller reasoning systems to outperform substantially larger generic models in sequential strategic inference?
-
----
-
-# Research direction
-
-The long-term view of this project is:
-
-$$
-\text{observations}
-\longrightarrow
-\text{structured estimator}
-\longrightarrow
-\text{geometric belief state}
-\longrightarrow
-\text{decision}
-$$
-
-rather than
-
-$$
-\text{observations}
-\longrightarrow
-\text{unstructured context}
-\longrightarrow
-\text{prediction}.
-$$
-
-The underlying hypothesis is that geometry provides useful inductive structure for inference under uncertainty.
-
-In passive statistical settings, this structure determines how observations should be aggregated.
-
-In strategic settings, it determines how beliefs about other agents should evolve.
-
-The same mathematical question appears in both:
-
-> **What structure should an estimator preserve in order to remain reliable when observations are limited, corrupted, or strategically generated?**
-
----
-
-# Citation
-
-If this repository becomes useful in academic work, please cite:
-
-```bibtex
-@software{shape_of_estimation,
-  title  = {The Shape of Estimation:
-            Geometry, Robustness, and Statistical Inference
-            Beyond Euclidean Assumptions},
-  year   = {2026},
-  note   = {Research software}
-}
-```
-
----
-
-# License
-
+## License 
 MIT
-
----
-
-## One-sentence summary
-
-**The Shape of Estimation studies statistical estimators as geometric objects by visualizing how they move, fail, and recover when geometry, contamination, and information structure change.**
