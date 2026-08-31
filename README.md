@@ -11,9 +11,8 @@ The project studies their behavior through four components:
 **estimator + geometry + data distribution + perturbation**
 <img width="1847" height="1204" alt="01_robustness_curve" src="https://github.com/user-attachments/assets/31cca747-5c99-4895-bae4-a77faf418c5a" />
 
+<img width="1735" height="1336" alt="03_contamination_geometry" src="https://github.com/user-attachments/assets/285bca68-f2c7-4fb6-967d-ab97748442f3" />
 
-![Uploading 03_contamination_geometry.png…]()
-<img width="1847" height="1204" alt="01_robustness_curve" src="https://github.com/user-attachments/assets/44680317-6a03-4b42-bfc7-a6825aab9f48" />
 
 <img width="1595" height="1341" alt="04_simplex_belief_trajectory_revised" src="https://github.com/user-attachments/assets/0ca94892-e631-429e-9067-dc68ec633eaf" />
 
