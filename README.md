@@ -6,7 +6,7 @@ Question:
 
 > How does the behavior of an estimator change when the geometry of the data or the structure of the observations changes?
 
-The project studies their behavior through four components:
+The project studies their behavior through four components：
 
 **estimator + geometry + data distribution + perturbation**
 <img width="1847" height="1204" alt="01_robustness_curve" src="https://github.com/user-attachments/assets/31cca747-5c99-4895-bae4-a77faf418c5a" />
